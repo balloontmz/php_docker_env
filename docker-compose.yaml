@@ -68,7 +68,7 @@ services:
       - "${MYSQL_PORT}:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=123456
-      - MYSQL_DATABASE=jinhui_mall_test
+      - MYSQL_DATABASE=mall_test
     restart: always
 
 ### PHPMyAdmin Container #########################################

@@ -29,10 +29,10 @@ COPY ./php.ini /usr/local/etc/php/conf.d/php.ini
 
 COPY ./worker.sh /tmp
 
-COPY ./wkhtmltopdf /usr/bin
-RUN chmod +x /usr/bin/wkhtmltopdf
+# COPY ./wkhtmltopdf /usr/bin
+# RUN chmod +x /usr/bin/wkhtmltopdf
 
-COPY ./simsun.ttc /usr/share/fonts/
+# COPY ./simsun.ttc /usr/share/fonts/
 
 RUN chmod +x /tmp/worker.sh
 

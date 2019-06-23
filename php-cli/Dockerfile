@@ -26,16 +26,16 @@ RUN pecl install -o -f redis \
 &&  docker-php-ext-enable redis
 
 COPY ./php.ini /usr/local/etc/php/conf.d/php.ini
-RUN mkdir -p /usr/share/fonts/chinese/TrueType/simsun.ttc
-COPY ./simsun.ttc /usr/share/fonts/chinese/TrueType/simsun.ttc
+# RUN mkdir -p /usr/share/fonts/chinese/TrueType/simsun.ttc
+#COPY ./simsun.ttc /usr/share/fonts/chinese/TrueType/simsun.ttc
 #RUN apt install wget -y 
 #RUN wget https://getcomposer.org/download/1.6.5/composer.phar -O /usr/bin/composer
 COPY ./composer /usr/bin/composer
 RUN chmod +x /usr/bin/composer
 
-COPY ./wkhtmltopdf /usr/bin
-RUN chmod +x /usr/bin/wkhtmltopdf
+# COPY ./wkhtmltopdf /usr/bin
+# RUN chmod +x /usr/bin/wkhtmltopdf
 
-COPY ./simsun.ttc /usr/share/fonts/
-COPY ./simsun.ttf /usr/share/fonts/
+# COPY ./simsun.ttc /usr/share/fonts/
+# COPY ./simsun.ttf /usr/share/fonts/
 WORKDIR /var/www/html
