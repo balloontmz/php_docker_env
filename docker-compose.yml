@@ -1,0 +1,141 @@
+version: '3'
+
+services:
+
+### PHP-FPM Container #######################################
+
+  php-fpm:
+    build:
+      context: ./php-fpm
+    volumes:
+      - ${WEB_ROOT}:/var/www/html
+    expose:
+      - "9000"
+    depends_on:
+      - mysql
+      - redis
+    restart: always
+
+### PHP-CLI Container #######################################
+
+  php-cli:
+    build:
+      context: ./php-cli
+    volumes:
+      - ${WEB_ROOT}:/var/www/html
+    depends_on:
+      - mysql
+      - redis
+    tty: true
+    restart: always
+
+### CRONTAB Container #######################################
+
+  crontab:
+    build:
+      context: ./crontab
+    volumes:
+      - ${WEB_ROOT}:/var/www/html
+    depends_on:
+      - mysql
+      - redis
+    tty: true
+    restart: always
+
+### WORKER Container #######################################
+
+  kean-worker:
+    build:
+      context: ./kean-worker
+    volumes:
+      - ${WEB_ROOT}:/var/www/html
+    depends_on:
+      - mysql
+      - redis
+    tty: true
+    restart: always
+#
+#  worker2:
+#    build:
+#      context: ./worker2
+#    volumes:
+#      - ${WEB_ROOT}:/var/www/html
+#    depends_on:
+#      - mysql
+#      - redis
+#    tty: true
+#    restart: always
+
+### Nginx Server Container ##################################
+
+  nginx:
+    build:
+      context: ./nginx
+    volumes:
+        - ${WEB_ROOT}:/var/www/html
+    ports:
+        - "${NGINX_HTTP_PORT}:80"
+        - "${NGINX_HTTPS_PORT}:443"
+    depends_on:
+        - php-fpm
+    restart: always
+
+### Node Server Container ################
+#  node:
+#    build:
+#      context: ./node
+#    ports:
+#      - "3001:3000"
+#    volumes:
+#      - ../node:/home/node
+#      - ../php:/home/php
+#    restart: always
+### MySQL Container #########################################
+
+  mysql:
+    image: mysql:5.7
+    volumes:
+        - ../data/mysql:/var/lib/mysql
+#        - mysql_data:/var/lib/mysql
+    expose:
+      - "3306"
+    ports:
+      - "${MYSQL_PORT}:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    restart: always
+
+### PHPMyAdmin Container #########################################
+
+#  phpmyadmin:
+#    image: phpmyadmin/phpmyadmin
+#    ports:
+#      - "${PHPMYADMIN_PORT}:80"
+#    links:
+#        - mysql:db
+#    depends_on:
+#      - mysql
+#    restart: always
+#    environment:
+#      - PMA_HOST=nletech-eu-db.c1snnfqvbket.eu-central-1.rds.amazonaws.com
+
+### Redis Container #########################################
+
+  redis:
+    image: redis:3.2.11
+    expose: 
+      - "6379"
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - ../data/redis:/data
+    restart: always
+
+### Volumes Setup ###########################################
+
+volumes:
+  mysql_data:
+networks:
+  default:
+    external:
+      name: ${USER_NETWORK}
