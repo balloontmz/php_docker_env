@@ -1,4 +1,4 @@
-FROM php:7.1.16-cli
+FROM php:7.2-cli
 
 ENV TZ=Asia/Shanghai
 
