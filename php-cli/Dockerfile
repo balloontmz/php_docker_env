@@ -36,8 +36,8 @@ COPY ./php.ini /usr/local/etc/php/conf.d/php.ini
 #RUN wget https://getcomposer.org/download/1.6.5/composer.phar -O /usr/bin/composer
 COPY ./composer /usr/bin/composer
 RUN chmod +x /usr/bin/composer
-RUN composer config -g repo.packagist composer https://packagist.laravel-china.org
-RUN composer global require laravel/installer
+# RUN composer config -g repo.packagist composer https://packagist.laravel-china.org
+# RUN composer global require laravel/installer
 
 COPY ./wkhtmltopdf /usr/bin
 RUN chmod +x /usr/bin/wkhtmltopdf
