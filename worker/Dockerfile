@@ -1,25 +1,26 @@
-FROM php:7.2-cli
+FROM php:7.4-cli
 
 ENV TZ=Asia/Shanghai
 
-#RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak && \
-#    echo "deb http://mirrors.163.com/debian/ jessie main non-free contrib" >/etc/apt/sources.list && \
-#    echo "deb http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list && \
-#    echo "deb-src http://mirrors.163.com/debian/ jessie main non-free contrib" >>/etc/apt/sources.list && \
-#    echo "deb-src http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list
-RUN printf "deb http://archive.debian.org/debian/ jessie main\ndeb-src http://archive.debian.org/debian/ jessie main\ndeb http://security.debian.org jessie/updates main\ndeb-src http://security.debian.org jessie/updates main" > /etc/apt/sources.list
+COPY ./sources.list.buster /etc/apt/sources.list
 
-RUN apt-get update && apt-get install -y \
+
+RUN apt-get update && apt-get install -y --allow-downgrades \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
-        libpng12-dev \
+        libpng-dev \
         git \
         zip \
-        wkhtmltopdf \
-    && docker-php-ext-install -j$(nproc) iconv mcrypt mysqli pdo_mysql pcntl bcmath\
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+	sudo \
+	zlib1g-dev \
+	libzip-dev \
+    && docker-php-ext-install -j$(nproc) iconv mysqli pdo_mysql pcntl bcmath zip\
+    && docker-php-ext-configure gd --with-jpeg --with-freetype \
     && docker-php-ext-install -j$(nproc) gd
+
+RUN pecl install -o -f mcrypt && \
+docker-php-ext-enable mcrypt
 
 RUN pecl install -o -f redis \
 &&  rm -rf /tmp/pear \
