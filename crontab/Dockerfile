@@ -5,6 +5,7 @@ ENV TZ=Asia/Shanghai
 COPY ./sources.list.buster /etc/apt/sources.list
 
 RUN apt-get update && apt-get install -y --allow-downgrades \
+	sudo \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
