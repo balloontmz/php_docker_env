@@ -15,6 +15,8 @@ services:
       - mysql
       - redis
     restart: always
+    stdin_open: true
+    tty: true
 
 ### PHP-CLI Container #######################################
 
@@ -23,6 +25,10 @@ services:
       context: ./php-cli
     volumes:
       - ${WEB_ROOT}:/var/www/html
+    expose:
+     - "12360"
+    ports:
+      - 23460:23460
     depends_on:
       - mysql
       - redis

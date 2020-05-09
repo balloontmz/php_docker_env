@@ -1,25 +1,35 @@
-FROM php:7.2-cli
+FROM php:7.4-cli
 
 ENV TZ=Asia/Shanghai
 
-#RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak && \
-#    echo "deb http://mirrors.163.com/debian/ jessie main non-free contrib" >/etc/apt/sources.list && \
-#    echo "deb http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list && \
-#    echo "deb-src http://mirrors.163.com/debian/ jessie main non-free contrib" >>/etc/apt/sources.list && \
-#    echo "deb-src http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list
-RUN printf "deb http://archive.debian.org/debian/ jessie main\ndeb-src http://archive.debian.org/debian/ jessie main\ndeb http://security.debian.org jessie/updates main\ndeb-src http://security.debian.org jessie/updates main" > /etc/apt/sources.list
+COPY ./sources.list /etc/apt/sources.list
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y -f --allow-downgrades \
+	sudo \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
-        libpng12-dev \
+        libpng-dev \
         git \
         zip \
-        wkhtmltopdf \
-    && docker-php-ext-install -j$(nproc) iconv mcrypt mysqli pdo_mysql pcntl bcmath\
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-install -j$(nproc) gd
+        zlib1g-dev \
+        supervisor \
+	net-tools \
+        procps \
+	net-tools \
+	supervisor \
+	curl \
+	wget \
+	libzip-dev
+ 
+RUN  docker-php-ext-install -j$(nproc) iconv mysqli pdo_mysql zip pcntl bcmath
+
+RUN  docker-php-ext-configure gd --with-freetype --with-jpeg
+
+RUN docker-php-ext-install -j$(nproc) gd
+
+RUN pecl install -o -f mcrypt && \
+docker-php-ext-enable mcrypt
 
 RUN pecl install -o -f redis \
 &&  rm -rf /tmp/pear \
@@ -27,12 +37,17 @@ RUN pecl install -o -f redis \
 
 COPY ./php.ini /usr/local/etc/php/conf.d/php.ini
 
+#PDF生成组件
+COPY ./wkhtmltox_0.12.5-1.buster_amd64.deb /tmp/wkhtmltox_0.12.5-1.buster_amd64.deb
+RUN dpkg -i /tmp/wkhtmltox_0.12.5-1.buster_amd64.deb; exit 0 
+RUN  apt -y -f install && \
+    dpkg -i /tmp/wkhtmltox_0.12.5-1.buster_amd64.deb
+
+#安装PDF字体
+RUN mkdir -p /usr/share/fonts/chinese/TrueType/ && wget https://h947136.coding.net/api/share/download/425b2c4b-fdac-47fe-989d-e1487b018215 -O /usr/share/fonts/chinese/TrueType/simsun.ttc
+RUN wget https://h947136.coding.net/api/share/download/90fe9a74-a042-4ee3-a8a4-4e02881c0708  -O /usr/share/fonts/truetype/FZHTJW.TTF
+
 COPY ./worker.sh /tmp
-
-# COPY ./wkhtmltopdf /usr/bin
-# RUN chmod +x /usr/bin/wkhtmltopdf
-
-# COPY ./simsun.ttc /usr/share/fonts/
 
 RUN chmod +x /tmp/worker.sh
 

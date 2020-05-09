@@ -1,3 +1,2 @@
 */5 * * * * root echo "OK"
-* * * * * www-data cd /var/www/html/xxx/ && /usr/local/bin/php artisan schedule:run 
-
+* * * * * www-data cd /var/www/html/jiyun/ && /usr/local/bin/php artisan schedule:run
