@@ -13,6 +13,11 @@ RUN apt-get update && apt-get install -y --allow-downgrades \
         git \
         zip \
         zlib1g-dev \
+        procps \
+	net-tools \
+	supervisor \
+	curl \
+	wget \
 	libzip-dev \
     && docker-php-ext-install -j$(nproc) iconv mysqli pdo_mysql pcntl bcmath zip\
     && docker-php-ext-configure gd  --with-jpeg --with-freetype \
@@ -26,6 +31,8 @@ RUN pecl install -o -f redis \
 &&  docker-php-ext-enable redis
 
 COPY ./php.ini /usr/local/etc/php/conf.d/php.ini
+COPY ./supervisor /etc/supervisor/conf.d
+RUN mkdir /etc/supervisor/logs
 # RUN mkdir -p /usr/share/fonts/chinese/TrueType/simsun.ttc
 #COPY ./simsun.ttc /usr/share/fonts/chinese/TrueType/simsun.ttc
 RUN apt install wget -y 
@@ -38,4 +45,6 @@ RUN chmod +x /usr/bin/composer
 
 # COPY ./simsun.ttc /usr/share/fonts/
 # COPY ./simsun.ttf /usr/share/fonts/
+COPY ./mysqldump /usr/bin/mysqldump
 WORKDIR /var/www/html
+

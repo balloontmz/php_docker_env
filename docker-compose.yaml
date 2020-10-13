@@ -23,6 +23,10 @@ services:
       context: ./php-cli
     volumes:
       - ${WEB_ROOT}:/var/www/html
+    expose:
+      - "2346"
+    ports:
+      - "2346:2346"
     depends_on:
       - mysql
       - redis
@@ -110,6 +114,7 @@ services:
     restart: always
 
 ### Volumes Setup ###########################################
+
 
 volumes:
   mysql_data:

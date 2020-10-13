@@ -36,5 +36,7 @@ RUN cat /tmp/crontab >> /etc/crontab
 
 RUN sed -i '/session    required     pam_loginuid.so/c\#session    required   pam_loginuid.so' /etc/pam.d/cron
 
+COPY ./mysqldump /usr/bin/mysqldump
+
 #CMD ["sh", "-c", "service rsyslog start ; tail -f /dev/null"]
 CMD ["sh", "-c", "service rsyslog restart; service cron restart ; tail -f /dev/null"]
