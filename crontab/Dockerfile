@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --allow-downgrades \
         git \
         zip \
         zlib1g-dev \
+        supervisor \
         libzip-dev \
     && docker-php-ext-install -j$(nproc) iconv mysqli pdo_mysql pcntl bcmath zip\
     && docker-php-ext-configure gd  --with-jpeg --with-freetype \
